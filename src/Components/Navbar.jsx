@@ -8,6 +8,7 @@ import { FaRegHeart } from "react-icons/fa6";
 import Tooltip from '@mui/material/Tooltip';
 import Search from './Search';
 import logo from '../assets/logo.png';
+import Navigation from "./Navigation";
 
 
 
@@ -99,6 +100,8 @@ const Header = () => {
                     </div>
                 </div>
             </div>
+
+            <Navigation />
 
         </header >
     );
