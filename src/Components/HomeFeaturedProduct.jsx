@@ -3,12 +3,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css/navigation";
 import './Swiper.css';
+import lightbulb from "../assets/lightbulb.jpg";
+import tubelight from "../assets/tubelight1.jpg";
+import decorativeLamp from "../assets/Decoration-lamp.png";
+import panelLight from "../assets/panel-light2.jpg";
 
 const products = [
-    { name: "Smart LED Bulb", img: "src/assets/lightbulb.jpg", price: "₹499" },
-    { name: "LED Tube Light", img: "src/assets/tubelight1.jpg", price: "₹899" },
-    { name: "Decorative Lamp", img: "src/assets/Decoration-lamp.png", price: "₹1299" },
-    { name: "Ceiling Panel Light", img: "src/assets/panel-light2.jpg", price: "₹1599" },
+  { name: "Smart LED Bulb", img: lightbulb, price: "₹499" },
+  { name: "LED Tube Light", img: tubelight, price: "₹899" },
+  { name: "Decorative Lamp", img: decorativeLamp, price: "₹1299" },
+  { name: "Ceiling Panel Light", img: panelLight, price: "₹1599" },
 ];
 
 const ProductSlider = () => {
