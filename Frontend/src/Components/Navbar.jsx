@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Badge } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
@@ -12,7 +12,6 @@ import { RiMenu2Fill } from "react-icons/ri";
 import { FaAngleDown } from "react-icons/fa6";
 import { GoRocket } from "react-icons/go";
 import { RxHamburgerMenu, RxCross2 } from "react-icons/rx";
-
 import Search from "./Search";
 import logo from "../assets/logo.png";
 
@@ -28,6 +27,24 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+  const confirmLogout = window.confirm("Are you sure you want to logout?");
+  if (confirmLogout) {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/"); // redirect to Home
+  }
+};
+
 
   return (
     <header className="bg-white shadow-sm">
@@ -82,15 +99,25 @@ const Header = () => {
 
             {/* desktop icons */}
             <ul className="hidden md:flex items-center gap-3">
-              <li>
-                <Link to="/Login" className="text-sm">
-                  Login
-                </Link>{" "}
-                |{" "}
-                <Link to="/SignUp" className="text-sm">
-                  Register
-                </Link>
-              </li>
+              {!isLoggedIn && (
+                <li>
+                  <Link to="/login" className="text-sm">
+                    Login
+                  </Link>{" "}
+                  |{" "}
+                  <Link to="/signup" className="text-sm">
+                    Register
+                  </Link>
+                </li>
+              )}
+
+              {isLoggedIn && (
+                <li>
+                  <button onClick={handleLogout} className="text-sm">
+                    Logout
+                  </button>
+                </li>
+              )}
 
               <li>
                 <Tooltip title="Compare">
@@ -103,7 +130,7 @@ const Header = () => {
               </li>
 
               <li>
-                <Link to="/Cart">
+                <Link to="/cart">
                   <Tooltip title="Cart">
                     <IconButton>
                       <StyledBadge badgeContent={1} color="secondary">
@@ -143,7 +170,7 @@ const Header = () => {
           {/* nav links */}
           <ul className="flex gap-6 text-sm font-medium">
             <li>
-              <Link to="/Home">Home</Link>
+              <Link to="/">Home</Link>
             </li>
             <li>
               <Link to="/products">Products</Link>
@@ -180,14 +207,16 @@ const Header = () => {
           </div>
 
           <ul className="flex flex-col gap-4 text-[15px] font-medium">
-            <li><Link to="/Home">Home</Link></li>
+            <li><Link to="/">Home</Link></li>
             <li><Link to="/products">Products</Link></li>
             <li><Link to="/category">Categories</Link></li>
             <li><Link to="/brand">Brands</Link></li>
             <li><Link to="/offer">Offer</Link></li>
             <li><Link to="/smart">IOT & Smart</Link></li>
             <li><Link to="/about">About Us</Link></li>
-            <li><Link to="/Login">Login / Register</Link></li>
+
+            {!isLoggedIn && <li><Link to="/login">Login / Register</Link></li>}
+            {isLoggedIn && <li><button onClick={handleLogout}>Logout</button></li>}
           </ul>
         </div>
       )}
