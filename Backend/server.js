@@ -8,8 +8,8 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 mongoose
   .connect("mongodb+srv://harshmishra3721_db_user:cMu88ZWO9DPFnAst@cluster0.vpdyofi.mongodb.net/?appName=Cluster0")

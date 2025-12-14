@@ -1,12 +1,10 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  brand: { type: String, required: true },
-  price: { type: Number, required: true },
-  discount: { type: Number, default: 0 },
-  image: { type: String },
-  category: { type: String }
-}, { timestamps: true });
+  name: String,
+  description: String,
+  price: Number,
+  image: String, // Cloudinary URL
+});
 
 export default mongoose.model("Product", productSchema);
