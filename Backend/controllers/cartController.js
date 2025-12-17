@@ -1,17 +1,23 @@
-import Cart from "../models/Cart.js";
+import {
+  findCartItem,
+  addCartItem,
+  increaseQuantity,
+  getUserCart,
+  deleteCartItem
+} from "../models/CartModel.js";
 
-// Add to Cart
+/* Add to Cart */
 export const addToCart = async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity = 1 } = req.body;
+  const userId = req.user.id;
 
   try {
-    const existing = await Cart.findOne({ productId });
+    const existing = await findCartItem(userId, productId);
 
     if (existing) {
-      existing.quantity += 1;
-      await existing.save();
+      await increaseQuantity(existing.id, quantity);
     } else {
-      await Cart.create({ productId, quantity });
+      await addCartItem(userId, productId, quantity);
     }
 
     res.json({ message: "Added to Cart" });
@@ -20,20 +26,22 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// Get Cart
+/* Get Cart */
 export const getCart = async (req, res) => {
+  const userId = req.user.id;
+
   try {
-    const cart = await Cart.find().populate("productId");
+    const cart = await getUserCart(userId);
     res.json(cart);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Remove item from Cart
+/* Remove Cart Item */
 export const removeCartItem = async (req, res) => {
   try {
-    await Cart.findByIdAndDelete(req.params.id);
+    await deleteCartItem(req.params.id);
     res.json({ message: "Item Removed" });
   } catch (error) {
     res.status(500).json({ message: error.message });

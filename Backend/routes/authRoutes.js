@@ -1,7 +1,11 @@
 import express from "express";
-import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+
+import {
+  createUser,
+  findUserByEmail
+} from "../models/userModel.js";
 
 const router = express.Router();
 
@@ -9,15 +13,13 @@ const router = express.Router();
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log("Signup Request:", req.body);
 
-    // Validate fields
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     // Check existing user
-    const exists = await User.findOne({ email });
+    const exists = await findUserByEmail(email);
     if (exists) {
       return res.status(400).json({ message: "Email already exists" });
     }
@@ -26,28 +28,27 @@ router.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const newUser = await User.create({
+    const userId = await createUser({
       name,
       email,
-      password: hashedPassword,
+      password: hashedPassword
     });
 
     // Create JWT
     const token = jwt.sign(
-      { id: newUser._id },
+      { id: userId },
       process.env.JWT_SECRET || "SECRET_KEY_ANSH_CHANGE_THIS",
       { expiresIn: "7d" }
     );
 
-    // Send success response
     res.status(201).json({
       message: "Signup successful",
       token,
       user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-      },
+        id: userId,
+        name,
+        email
+      }
     });
 
   } catch (error) {
@@ -60,13 +61,12 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Login Request:", req.body);
 
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await findUserByEmail(email);
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id },
+      { id: user.id },
       process.env.JWT_SECRET || "SECRET_KEY_ANSH_CHANGE_THIS",
       { expiresIn: "7d" }
     );
@@ -86,10 +86,10 @@ router.post("/login", async (req, res) => {
       message: "Login successful",
       token,
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
-        email: user.email,
-      },
+        email: user.email
+      }
     });
 
   } catch (error) {
